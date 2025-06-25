@@ -1,14 +1,17 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import CheckoutForm from '@/components/CheckoutForm';
+import { useState } from 'react';
 
 const Cart = () => {
   const { state, dispatch } = useCart();
   const { toast } = useToast();
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const updateQuantity = (id: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
@@ -22,12 +25,14 @@ const Cart = () => {
     });
   };
 
-  const handlePlaceOrder = () => {
+  const handleCheckoutSubmit = (data: any) => {
+    console.log('Order data:', data);
     toast({
       title: 'Order placed successfully!',
-      description: `Your order for $${state.total.toFixed(2)} has been placed.`,
+      description: `Your order for $${state.total.toFixed(2)} has been placed. We'll contact you at ${data.email} with updates.`,
     });
     dispatch({ type: 'CLEAR_CART' });
+    setCheckoutOpen(false);
   };
 
   if (state.items.length === 0) {
@@ -142,12 +147,14 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <Button
-                  onClick={handlePlaceOrder}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-lg py-3"
-                >
-                  Place Order
-                </Button>
+                <Dialog open={checkoutOpen} onOpenChange={setCheckoutOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-lg py-3">
+                      Place Order
+                    </Button>
+                  </DialogTrigger>
+                  <CheckoutForm onSubmit={handleCheckoutSubmit} total={state.total} />
+                </Dialog>
 
                 <Link to="/products" className="block">
                   <Button
