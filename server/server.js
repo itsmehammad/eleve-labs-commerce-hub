@@ -6,6 +6,6 @@ const app = express();
 app.use(express.json());
 app.use('/orders', orderRouter);
 
-mongoose.connect('mongodb://localhost/your-db')
-  .then(() => app.listen(3000, () => console.log('Listening on 3000')))
+mongoose.connect('mongodb+srv://hammad:4Ywvvs2.QTQ2ThT@cluster0.slxcsfx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+  .then(() => app.listen(5000, () => console.log('Listening on 3000')))
   .catch(console.error);
